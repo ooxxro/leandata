@@ -233,22 +233,24 @@ class VacationTable extends React.Component {
               <th>End Date</th>
               <th className="right">
                 <Tooltip title="new vacation" arrow>
-                  <IconButton
-                    aria-label="new vacation"
-                    size="small"
-                    onClick={() =>
-                      this.setState({
-                        newVacationOpen: true,
-                        userId: null,
-                        startDate: null,
-                        endDate: null,
-                        hasError: false,
-                      })
-                    }
-                    disabled={editVacationIdx !== null}
-                  >
-                    <AddIcon />
-                  </IconButton>
+                  <span>
+                    <IconButton
+                      aria-label="new vacation"
+                      size="small"
+                      onClick={() =>
+                        this.setState({
+                          newVacationOpen: true,
+                          userId: null,
+                          startDate: null,
+                          endDate: null,
+                          hasError: false,
+                        })
+                      }
+                      disabled={editVacationIdx !== null}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  </span>
                 </Tooltip>
               </th>
             </tr>
@@ -273,32 +275,36 @@ class VacationTable extends React.Component {
                   <td>{vacation.endDate.toDateString()}</td>
                   <td className="right">
                     <Tooltip title="edit" arrow>
-                      <IconButton
-                        className="hover-show"
-                        aria-label="edit"
-                        size="small"
-                        onClick={() =>
-                          this.setState({
-                            editVacationIdx: i,
-                            hasError: false,
-                            ...vacation,
-                          })
-                        }
-                        disabled={newVacationOpen || editVacationIdx !== null}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
+                      <span>
+                        <IconButton
+                          className="hover-show"
+                          aria-label="edit"
+                          size="small"
+                          onClick={() =>
+                            this.setState({
+                              editVacationIdx: i,
+                              hasError: false,
+                              ...vacation,
+                            })
+                          }
+                          disabled={newVacationOpen || editVacationIdx !== null}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      </span>
                     </Tooltip>
                     <Tooltip title="delete" arrow>
-                      <IconButton
-                        className="hover-show"
-                        aria-label="delete"
-                        size="small"
-                        onClick={() => this.onRemoveVacation(i)}
-                        disabled={newVacationOpen || editVacationIdx !== null}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
+                      <span>
+                        <IconButton
+                          className="hover-show"
+                          aria-label="delete"
+                          size="small"
+                          onClick={() => this.onRemoveVacation(i)}
+                          disabled={newVacationOpen || editVacationIdx !== null}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </span>
                     </Tooltip>
                   </td>
                 </tr>

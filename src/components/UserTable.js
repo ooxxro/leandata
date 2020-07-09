@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { IconButton, Tooltip, TextField } from '@material-ui/core';
+import { IconButton, Tooltip, TextField, Chip } from '@material-ui/core';
 import StyledAutocomplete from './StyledAutocomplete';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/AddCircle';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
+import BeachIcon from '@material-ui/icons/BeachAccess';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { withSnackbar } from 'notistack';
@@ -212,7 +213,7 @@ class UserTable extends React.Component {
   };
 
   render() {
-    const { users } = this.props;
+    const { users, userIdsInVacation } = this.props;
     const { newUserOpen, editUserId } = this.state;
     return (
       <Wrapper>
@@ -225,23 +226,25 @@ class UserTable extends React.Component {
               <th>Birth Date</th>
               <th className="right">
                 <Tooltip title="add user" arrow>
-                  <IconButton
-                    aria-label="add user"
-                    size="small"
-                    onClick={() =>
-                      this.setState({
-                        newUserOpen: true,
-                        firstName: '',
-                        lastName: '',
-                        location: null,
-                        birthDate: null,
-                        hasError: false,
-                      })
-                    }
-                    disabled={editUserId !== null}
-                  >
-                    <AddIcon />
-                  </IconButton>
+                  <span>
+                    <IconButton
+                      aria-label="add user"
+                      size="small"
+                      onClick={() =>
+                        this.setState({
+                          newUserOpen: true,
+                          firstName: '',
+                          lastName: '',
+                          location: null,
+                          birthDate: null,
+                          hasError: false,
+                        })
+                      }
+                      disabled={editUserId !== null}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  </span>
                 </Tooltip>
               </th>
             </tr>
@@ -264,29 +267,41 @@ class UserTable extends React.Component {
                     <td>{users[id].location}</td>
                     <td>{users[id].birthDate.toDateString()}</td>
                     <td className="right">
-                      <Tooltip title="edit" arrow>
-                        <IconButton
-                          className="hover-show"
-                          aria-label="edit"
+                      {userIdsInVacation.has(id) && (
+                        <Chip
+                          icon={<BeachIcon fontSize="small" />}
+                          label="on vacation"
+                          color="secondary"
                           size="small"
-                          onClick={() =>
-                            this.setState({ editUserId: id, hasError: false, ...users[id] })
-                          }
-                          disabled={newUserOpen || editUserId !== null}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
+                        />
+                      )}
+                      <Tooltip title="edit" arrow>
+                        <span>
+                          <IconButton
+                            className="hover-show"
+                            aria-label="edit"
+                            size="small"
+                            onClick={() =>
+                              this.setState({ editUserId: id, hasError: false, ...users[id] })
+                            }
+                            disabled={newUserOpen || editUserId !== null}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </span>
                       </Tooltip>
                       <Tooltip title="delete" arrow>
-                        <IconButton
-                          className="hover-show"
-                          aria-label="delete"
-                          size="small"
-                          onClick={() => this.onRemoveUser(id)}
-                          disabled={newUserOpen || editUserId !== null}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
+                        <span>
+                          <IconButton
+                            className="hover-show"
+                            aria-label="delete"
+                            size="small"
+                            onClick={() => this.onRemoveUser(id)}
+                            disabled={newUserOpen || editUserId !== null}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </span>
                       </Tooltip>
                     </td>
                   </tr>
