@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Paper, IconButton, Tooltip, TextField, MenuItem } from '@material-ui/core';
+import { IconButton, Tooltip, TextField } from '@material-ui/core';
 import StyledAutocomplete from './StyledAutocomplete';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -12,74 +12,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { withSnackbar } from 'notistack';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-// import DataTable from './DataTable';
+import DataTable from './DataTable';
 import locations from '../us-cities.json';
 
 const Wrapper = styled.div`
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    color: rgba(0, 0, 0, 0.87);
-  }
-
-  thead,
-  tr:not(:last-child) td {
-    border-bottom: 1px solid rgba(224, 224, 224, 1);
-  }
-
-  th,
-  td {
-    padding: 15px;
-    text-align: left;
-    &.left {
-      text-align: left;
-    }
-    &.center {
-      text-align: center;
-    }
-    &.right {
-      text-align: right;
-    }
-  }
-
-  .hover-show {
-    opacity: 0;
-    margin-left: 5px;
-  }
-
-  tbody tr:hover {
-    box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60, 64, 67, 0.3),
-      0 1px 3px 1px rgba(60, 64, 67, 0.15);
-    .hover-show {
-      opacity: 1;
-    }
-  }
-
-  .new,
-  .edit {
-    .MuiInputBase-root {
-      font-size: 13px;
-    }
-    .error {
-      .react-datepicker-wrapper input {
-        border-bottom: 2px solid #f2453d;
-      }
-    }
-    .react-datepicker-wrapper input {
-      border: 0;
-      border-bottom: 1px solid #888;
-      padding: 3px 0 7px;
-      &:focus {
-        outline: 0;
-      }
-      &::placeholder {
-        color: #a8a8a8;
-      }
-    }
-
-    td {
-      vertical-align: bottom;
-    }
+  .MuiAutocomplete-root {
+    min-width: 120px;
   }
 `;
 
@@ -274,104 +212,94 @@ class UserTable extends React.Component {
   };
 
   render() {
-    const { users, vacations, updateUsers, updateVacations } = this.props;
-    const {
-      newUserOpen,
-      editUserId,
-      firstName,
-      lastName,
-      location,
-      birthDate,
-      hasError,
-    } = this.state;
+    const { users } = this.props;
+    const { newUserOpen, editUserId } = this.state;
     return (
       <Wrapper>
-        <Paper>
-          <table>
-            <thead>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Location</th>
-                <th>Birth Date</th>
-                <th className="right">
-                  <Tooltip title="add user" arrow>
-                    <IconButton
-                      aria-label="add user"
-                      size="small"
-                      onClick={() =>
-                        this.setState({
-                          newUserOpen: true,
-                          firstName: '',
-                          lastName: '',
-                          location: null,
-                          birthDate: null,
-                          hasError: false,
-                        })
-                      }
-                      disabled={editUserId !== null}
-                    >
-                      <AddIcon />
-                    </IconButton>
-                  </Tooltip>
-                </th>
-              </tr>
-            </thead>
+        <DataTable>
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Location</th>
+              <th>Birth Date</th>
+              <th className="right">
+                <Tooltip title="add user" arrow>
+                  <IconButton
+                    aria-label="add user"
+                    size="small"
+                    onClick={() =>
+                      this.setState({
+                        newUserOpen: true,
+                        firstName: '',
+                        lastName: '',
+                        location: null,
+                        birthDate: null,
+                        hasError: false,
+                      })
+                    }
+                    disabled={editUserId !== null}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Tooltip>
+              </th>
+            </tr>
+          </thead>
 
-            <tbody>
-              {Object.keys(users)
-                .sort()
-                .map(id =>
-                  editUserId === id ? (
-                    // edit row
-                    <tr className="edit" key={`editing ${id}`}>
-                      {this.renderEditRow(this.onEditUser, () =>
-                        this.setState({ editUserId: null })
-                      )}
-                    </tr>
-                  ) : (
-                    // normal row
-                    <tr key={id}>
-                      <td>{users[id].firstName}</td>
-                      <td>{users[id].lastName}</td>
-                      <td>{users[id].location}</td>
-                      <td>{users[id].birthDate.toDateString()}</td>
-                      <td className="right">
-                        <Tooltip title="edit" arrow>
-                          <IconButton
-                            className="hover-show"
-                            aria-label="edit"
-                            size="small"
-                            onClick={() => this.setState({ editUserId: id, ...users[id] })}
-                            disabled={newUserOpen}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="delete" arrow>
-                          <IconButton
-                            className="hover-show"
-                            aria-label="delete"
-                            size="small"
-                            onClick={() => this.onRemoveUser(id)}
-                            disabled={newUserOpen}
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  )
-                )}
-
-              {newUserOpen && (
-                <tr className="new">
-                  {this.renderEditRow(this.onAddUser, () => this.setState({ newUserOpen: false }))}
-                </tr>
+          <tbody>
+            {Object.keys(users)
+              .sort()
+              .map(id =>
+                editUserId === id ? (
+                  // edit row
+                  <tr className="edit" key={`editing ${id}`}>
+                    {this.renderEditRow(this.onEditUser, () => this.setState({ editUserId: null }))}
+                  </tr>
+                ) : (
+                  // normal row
+                  <tr key={id}>
+                    <td>{users[id].firstName}</td>
+                    <td>{users[id].lastName}</td>
+                    <td>{users[id].location}</td>
+                    <td>{users[id].birthDate.toDateString()}</td>
+                    <td className="right">
+                      <Tooltip title="edit" arrow>
+                        <IconButton
+                          className="hover-show"
+                          aria-label="edit"
+                          size="small"
+                          onClick={() =>
+                            this.setState({ editUserId: id, hasError: false, ...users[id] })
+                          }
+                          disabled={newUserOpen || editUserId !== null}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="delete" arrow>
+                        <IconButton
+                          className="hover-show"
+                          aria-label="delete"
+                          size="small"
+                          onClick={() => this.onRemoveUser(id)}
+                          disabled={newUserOpen || editUserId !== null}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </td>
+                  </tr>
+                )
               )}
-            </tbody>
-          </table>
-        </Paper>
+
+            {newUserOpen && (
+              <tr className="new">
+                {this.renderEditRow(this.onAddUser, () => this.setState({ newUserOpen: false }))}
+              </tr>
+            )}
+          </tbody>
+        </DataTable>
       </Wrapper>
     );
   }

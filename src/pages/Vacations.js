@@ -4,12 +4,17 @@ import VacationTable from '../components/VacationTable';
 
 const Wrapper = styled.div``;
 
-export default function Vacations() {
+export default function Vacations({ users, vacations, updateUsers, updateVacations }) {
   return (
     <Wrapper>
       <h1>Vacations</h1>
 
-      <VacationTable />
+      <VacationTable
+        users={users}
+        vacations={vacations}
+        updateUsers={updateUsers}
+        updateVacations={updateVacations}
+      />
     </Wrapper>
   );
 }

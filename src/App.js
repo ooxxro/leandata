@@ -42,7 +42,9 @@ export default function App() {
       birthDate: new Date('10/24/2020'),
     },
   });
-  const [vacations, updateVacations] = useState([]);
+  const [vacations, updateVacations] = useState([
+    { userId: '123', startDate: new Date('07/08/2020'), endDate: new Date('07/08/2021') },
+  ]);
 
   return (
     <div className={`${classes.root} App`}>
