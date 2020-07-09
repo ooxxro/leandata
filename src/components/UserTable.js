@@ -55,7 +55,8 @@ const Wrapper = styled.div`
     }
   }
 
-  .new {
+  .new,
+  .edit {
     .MuiInputBase-root {
       font-size: 13px;
     }
@@ -85,6 +86,7 @@ const Wrapper = styled.div`
 class UserTable extends React.Component {
   state = {
     newUserOpen: false,
+    editUserId: null,
     firstName: '',
     lastName: '',
     location: null,
@@ -103,8 +105,6 @@ class UserTable extends React.Component {
       });
       return;
     }
-
-    console.log(birthDate);
 
     const userIds = Object.keys(users).sort();
 
@@ -170,9 +170,120 @@ class UserTable extends React.Component {
     });
   };
 
+  onEditUser = () => {
+    const { users, updateUsers, enqueueSnackbar } = this.props;
+    const { editUserId, firstName, lastName, location, birthDate } = this.state;
+
+    if (!firstName.trim() || !lastName.trim() || !location || !birthDate) {
+      this.setState({ hasError: true });
+      enqueueSnackbar('There are some required fields still empty.', {
+        variant: 'error',
+      });
+      return;
+    }
+
+    updateUsers({
+      ...users,
+      [editUserId]: {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        location,
+        birthDate,
+      },
+    });
+
+    enqueueSnackbar(`Successfully edited user: "${firstName.trim()} ${lastName.trim()}"`, {
+      variant: 'success',
+    });
+
+    this.setState({
+      editUserId: null,
+      firstName: '',
+      lastName: '',
+      location: null,
+      birthDate: null,
+      hasError: false,
+    });
+  };
+
+  renderEditRow = (onSave, onCancel) => {
+    const { firstName, lastName, location, birthDate, hasError } = this.state;
+
+    return (
+      <>
+        <td>
+          <TextField
+            placeholder="First Name"
+            size="small"
+            required
+            value={firstName}
+            onChange={e => this.setState({ firstName: e.target.value })}
+            error={hasError && !firstName.trim()}
+          />
+        </td>
+        <td>
+          <TextField
+            placeholder="Last Name"
+            size="small"
+            required
+            value={lastName}
+            onChange={e => this.setState({ lastName: e.target.value })}
+            error={hasError && !lastName.trim()}
+          />
+        </td>
+        <td>
+          <StyledAutocomplete
+            value={location}
+            onChange={(e, newValue) => this.setState({ location: newValue })}
+            options={locations['us-cities']}
+            getOptionLabel={option => option}
+            renderInput={params => (
+              <TextField {...params} placeholder="Location" error={hasError && !location} />
+            )}
+            size="small"
+          />
+        </td>
+        <td>
+          <div className={hasError && !birthDate ? 'error' : ''}>
+            <DatePicker
+              selected={birthDate}
+              onChange={date =>
+                this.setState({
+                  birthDate: date,
+                })
+              }
+              showYearDropdown
+              placeholderText="Birth Date"
+            />
+          </div>
+        </td>
+        <td className="right">
+          <Tooltip title="save" arrow>
+            <IconButton aria-label="save" size="small" onClick={onSave}>
+              <CheckIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="cancel" arrow>
+            <IconButton aria-label="cancel" size="small" onClick={onCancel}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </td>
+      </>
+    );
+  };
+
   render() {
     const { users, vacations, updateUsers, updateVacations } = this.props;
-    const { newUserOpen, firstName, lastName, location, birthDate, hasError } = this.state;
+    const {
+      newUserOpen,
+      editUserId,
+      firstName,
+      lastName,
+      location,
+      birthDate,
+      hasError,
+    } = this.state;
     return (
       <Wrapper>
         <Paper>
@@ -198,6 +309,7 @@ class UserTable extends React.Component {
                           hasError: false,
                         })
                       }
+                      disabled={editUserId !== null}
                     >
                       <AddIcon />
                     </IconButton>
@@ -209,113 +321,52 @@ class UserTable extends React.Component {
             <tbody>
               {Object.keys(users)
                 .sort()
-                .map(id => (
-                  <tr key={id}>
-                    <td>{users[id].firstName}</td>
-                    <td>{users[id].lastName}</td>
-                    <td>{users[id].location}</td>
-                    <td>{users[id].birthDate.toDateString()}</td>
-                    <td className="right">
-                      <Tooltip title="edit" arrow>
-                        <IconButton className="hover-show" aria-label="edit" size="small">
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="delete" arrow>
-                        <IconButton
-                          className="hover-show"
-                          aria-label="delete"
-                          size="small"
-                          onClick={() => this.onRemoveUser(id)}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                ))}
+                .map(id =>
+                  editUserId === id ? (
+                    // edit row
+                    <tr className="edit" key={`editing ${id}`}>
+                      {this.renderEditRow(this.onEditUser, () =>
+                        this.setState({ editUserId: null })
+                      )}
+                    </tr>
+                  ) : (
+                    // normal row
+                    <tr key={id}>
+                      <td>{users[id].firstName}</td>
+                      <td>{users[id].lastName}</td>
+                      <td>{users[id].location}</td>
+                      <td>{users[id].birthDate.toDateString()}</td>
+                      <td className="right">
+                        <Tooltip title="edit" arrow>
+                          <IconButton
+                            className="hover-show"
+                            aria-label="edit"
+                            size="small"
+                            onClick={() => this.setState({ editUserId: id, ...users[id] })}
+                            disabled={newUserOpen}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="delete" arrow>
+                          <IconButton
+                            className="hover-show"
+                            aria-label="delete"
+                            size="small"
+                            onClick={() => this.onRemoveUser(id)}
+                            disabled={newUserOpen}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  )
+                )}
 
               {newUserOpen && (
                 <tr className="new">
-                  <td>
-                    <TextField
-                      placeholder="First Name"
-                      size="small"
-                      required
-                      value={firstName}
-                      onChange={e => this.setState({ firstName: e.target.value })}
-                      error={hasError && !firstName.trim()}
-                    />
-                  </td>
-                  <td>
-                    <TextField
-                      placeholder="Last Name"
-                      size="small"
-                      required
-                      value={lastName}
-                      onChange={e => this.setState({ lastName: e.target.value })}
-                      error={hasError && !lastName.trim()}
-                    />
-                  </td>
-                  <td>
-                    {/* <TextField
-                      select
-                      required
-                      label="Location"
-                      value={location}
-                      onChange={e => this.setState({ location: e.target.value })}
-                    >
-                      {locations['us-cities'].map(option => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </TextField> */}
-                    <StyledAutocomplete
-                      value={location}
-                      onChange={(e, newValue) => this.setState({ location: newValue })}
-                      options={locations['us-cities']}
-                      getOptionLabel={option => option}
-                      renderInput={params => (
-                        <TextField
-                          {...params}
-                          placeholder="Location"
-                          error={hasError && !location}
-                        />
-                      )}
-                      size="small"
-                    />
-                  </td>
-                  <td>
-                    <div className={hasError && !birthDate ? 'error' : ''}>
-                      <DatePicker
-                        selected={birthDate}
-                        onChange={date =>
-                          this.setState({
-                            birthDate: date,
-                          })
-                        }
-                        showYearDropdown
-                        placeholderText="Birth Date"
-                      />
-                    </div>
-                  </td>
-                  <td className="right">
-                    <Tooltip title="save" arrow>
-                      <IconButton aria-label="save" size="small" onClick={this.onAddUser}>
-                        <CheckIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="cancel" arrow>
-                      <IconButton
-                        aria-label="cancel"
-                        size="small"
-                        onClick={() => this.setState({ newUserOpen: false })}
-                      >
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </td>
+                  {this.renderEditRow(this.onAddUser, () => this.setState({ newUserOpen: false }))}
                 </tr>
               )}
             </tbody>
