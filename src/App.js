@@ -39,10 +39,16 @@ export default class App extends React.Component {
         birthDate: new Date('10/24/1992'),
       },
       124: {
-        firstName: 'BB',
-        lastName: 'DD',
+        firstName: 'Dax',
+        lastName: 'Chen',
         location: 'Sunnyvale',
         birthDate: new Date('05/10/2011'),
+      },
+      125: {
+        firstName: 'John',
+        lastName: 'Smith',
+        location: 'Santa Clara',
+        birthDate: new Date('03/16/1853'),
       },
     },
     vacations: [

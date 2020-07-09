@@ -1,4 +1,18 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<h1 align="center">LeanData Table</h1>
+
+<p align="center">
+  <a href="https://app.netlify.com/sites/leandata-table/deploys"><img src="https://api.netlify.com/api/v1/badges/25076b59-e22e-45b1-9539-2c181829774c/deploy-status" alt="Deploy Status"></a>
+</p>
+
+## Online Demo
+
+[https://leandata-table.amberber.me](https://leandata-table.amberber.me)
+
+---
+
+![screenshot](screenshot.png)
+
+> This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
