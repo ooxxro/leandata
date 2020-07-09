@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { AppBar, CssBaseline, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, CssBaseline, Toolbar, Typography, IconButton } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import SideBar from './components/SideBar';
@@ -17,6 +18,7 @@ const Wrapper = styled.div`
   .logo {
     font-family: 'Carter One', cursive;
     font-size: 24px;
+    margin-left: 0.5rem;
   }
   .content {
     flex-grow: 1;
@@ -28,6 +30,7 @@ const Wrapper = styled.div`
 
 export default class App extends React.Component {
   state = {
+    sideOpen: true,
     users: {
       123: {
         firstName: 'Amber',
@@ -77,7 +80,7 @@ export default class App extends React.Component {
   };
 
   render() {
-    const { users, vacations, userIdsInVacation } = this.state;
+    const { sideOpen, users, vacations, userIdsInVacation } = this.state;
 
     return (
       <Wrapper className="App">
@@ -92,13 +95,21 @@ export default class App extends React.Component {
           <Router>
             <AppBar position="fixed" className="appBar">
               <Toolbar>
+                <IconButton
+                  color="inherit"
+                  aria-label="toggle drawer"
+                  onClick={() => this.setState(state => ({ sideOpen: !state.sideOpen }))}
+                  edge="start"
+                >
+                  <MenuIcon />
+                </IconButton>
                 <Typography variant="h6" noWrap className="logo">
                   LeanData Table
                 </Typography>
               </Toolbar>
             </AppBar>
 
-            <SideBar />
+            <SideBar open={sideOpen} />
 
             <main className="content">
               <Switch>

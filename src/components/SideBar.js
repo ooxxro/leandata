@@ -1,47 +1,55 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import styled from 'styled-components';
 import { Drawer, Toolbar, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import FaceIcon from '@material-ui/icons/Face';
 import BeachIcon from '@material-ui/icons/BeachAccess';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-const drawerWidth = 240;
+const drawerWidth = 210;
+const closeWidth = 56;
 
-const useStyles = makeStyles(theme => ({
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    backgroundColor: '#eaf5ef',
-  },
-  drawerContainer: {
-    overflow: 'auto',
-  },
-}));
+const StyledDrawer = styled(Drawer)`
+  width: ${drawerWidth}px;
+  flex-shrink: 0;
+  overflow-x: hidden;
+  transition: all 0.5s ease-out;
+  .MuiPaper-root {
+    width: ${drawerWidth}px;
+    background-color: #eaf5ef;
+    transition: all 0.5s ease-out;
+  }
+  .drawerContainer {
+    overflow: auto;
+  }
+  &.close {
+    width: ${closeWidth}px;
+    .MuiPaper-root {
+      width: ${closeWidth}px;
+    }
+  }
 
-export default function SideBar() {
-  const classes = useStyles();
+  a.MuiListItem-root {
+    border-right: 5px solid transparent;
+    &.active {
+      border-color: #36b572;
+      background-color: rgba(0, 0, 0, 0.08);
+    }
+  }
+`;
 
+export default function SideBar({ open }) {
   return (
-    <Drawer
-      className={classes.drawer}
-      variant="permanent"
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-    >
+    <StyledDrawer variant="permanent" className={open ? '' : 'close'}>
       <Toolbar />
-      <div className={classes.drawerContainer}>
+      <div className="drawerContainer">
         <List>
-          <ListItem button component={Link} to="users">
+          <ListItem button component={NavLink} to="users">
             <ListItemIcon>
               <FaceIcon />
             </ListItemIcon>
             <ListItemText primary="Users" />
           </ListItem>
-          <ListItem button component={Link} to="vacations">
+          <ListItem button component={NavLink} to="vacations">
             <ListItemIcon>
               <BeachIcon />
             </ListItemIcon>
@@ -49,6 +57,6 @@ export default function SideBar() {
           </ListItem>
         </List>
       </div>
-    </Drawer>
+    </StyledDrawer>
   );
 }
