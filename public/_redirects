@@ -1,0 +1,7 @@
+# https://docs.netlify.com/routing/redirects/rewrites-proxies
+
+# for SPA
+/*    /index.html   200
+
+# Redirect default Netlify subdomain to primary domain
+http://leandata-table.netlify.com/* http://leandata-table.amberber.me/:splat 301!

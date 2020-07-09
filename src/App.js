@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, CssBaseline, Toolbar, Typography } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 import SideBar from './components/SideBar';
-import Users from './components/Users';
-import Vacations from './components/Vacations';
+import Users from './pages/Users';
+import Vacations from './pages/Vacations';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: `64px 24px`,
     backgroundColor: '#ebf7ef',
     minHeight: '100vh',
   },
@@ -27,37 +28,68 @@ const useStyles = makeStyles(theme => ({
 
 export default function App() {
   const classes = useStyles();
+  const [users, updateUsers] = useState({
+    123: {
+      firstName: 'Amber',
+      lastName: 'Hung',
+      location: 'Mountain View',
+      birthDate: new Date('10/24/1992'),
+    },
+    124: {
+      firstName: 'BB',
+      lastName: 'Hung',
+      location: 'Lake View',
+      birthDate: new Date('10/24/2020'),
+    },
+  });
+  const [vacations, updateVacations] = useState([]);
+
   return (
     <div className={`${classes.root} App`}>
       <CssBaseline />
 
-      <Router>
-        <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar>
-            <Typography variant="h6" noWrap className={classes.logo}>
-              LeanData
-            </Typography>
-          </Toolbar>
-        </AppBar>
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <Router>
+          <AppBar position="fixed" className={classes.appBar}>
+            <Toolbar>
+              <Typography variant="h6" noWrap className={classes.logo}>
+                LeanData Table
+              </Typography>
+            </Toolbar>
+          </AppBar>
 
-        <SideBar />
+          <SideBar />
 
-        <main className={classes.content}>
-          <Toolbar />
-
-          <Switch>
-            <Route exact path="/">
-              <Redirect to="/users" />
-            </Route>
-            <Route exact path="/users">
-              <Users />
-            </Route>
-            <Route exact path="/vacations">
-              <Vacations />
-            </Route>
-          </Switch>
-        </main>
-      </Router>
+          <main className={classes.content}>
+            <Switch>
+              <Route exact path="/">
+                <Redirect to="/users" />
+              </Route>
+              <Route exact path="/users">
+                <Users
+                  users={users}
+                  vacations={vacations}
+                  updateUsers={updateUsers}
+                  updateVacations={updateVacations}
+                />
+              </Route>
+              <Route exact path="/vacations">
+                <Vacations
+                  users={users}
+                  vacations={vacations}
+                  updateUsers={updateUsers}
+                  updateVacations={updateVacations}
+                />
+              </Route>
+            </Switch>
+          </main>
+        </Router>
+      </SnackbarProvider>
     </div>
   );
 }
