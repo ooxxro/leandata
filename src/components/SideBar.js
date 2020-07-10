@@ -19,7 +19,8 @@ const StyledDrawer = styled(Drawer)`
     transition: all 0.5s ease-out;
   }
   .drawerContainer {
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   &.close {
     width: ${closeWidth}px;
