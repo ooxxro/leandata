@@ -6,7 +6,7 @@
 
 ## Online Demo
 
-[https://leandata-table.amberber.me](https://leandata-table.amberber.me)
+[https://leandata-table.netlify.app](https://leandata-table.netlify.app)
 
 ---
 
